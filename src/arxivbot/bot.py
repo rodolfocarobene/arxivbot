@@ -25,7 +25,7 @@ TODAY_ARXIV = {}
 
 interests = {
     "categories": ["quant-ph"],
-    "authors": ["Giachero"],
+    "authors": ["Malnou", "Cancelo"],
     "keywords": ["TWPA", "RFSoC"],
 }
 
