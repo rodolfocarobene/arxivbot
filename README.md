@@ -37,7 +37,7 @@ pip install .
 Run the bot using:
 
 ```bash
-python bot.py
+python src/arxivbot/bot.py
 ```
 
 Once the bot is set up and running, you can use the following commands:
