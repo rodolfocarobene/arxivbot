@@ -1,0 +1,29 @@
+[project]
+name = "arxivbot"
+version = "0.0.1"
+description = "Discord bot for new arXiv articles"
+readme = "README.md"
+requires-python = ">=3.10"
+
+# This is either text indicating the license for the distribution, or a file
+# that contains the license
+# https://packaging.python.org/en/latest/specifications/core-metadata/#license
+#license = {file = "LICENSE.txt"}
+
+authors = [
+  {name = "R. Carobene", email = "rodolfo.carobene@gmal.com" }
+]
+
+dependencies = [ # Optional
+  "arxiv",
+  "discord",
+  "python-dotenv",
+  "pytz"
+]
+
+[project.urls]  # Optional
+"Homepage" = "https://github.com/pypa/sampleproject"
+
+[build-system]
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
