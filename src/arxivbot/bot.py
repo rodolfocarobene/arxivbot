@@ -1,14 +1,13 @@
 """Discord bot to fetch new arXiv papers."""
 
+import datetime
 import os
+
 import arxiv
 import discord
-import datetime
-from discord.ext import commands, tasks
-
-from dotenv import load_dotenv
-
 import pytz
+from discord.ext import commands, tasks
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -93,7 +92,7 @@ async def add_queries(channel, cat, *keywords):
     Parameters
     -----------
     cat: str
-        Te category where to add the keywords (categories, authors, keywords).
+        The category where to add the keywords (categories, authors, keywords).
     keywords: list(str)
         Keywords to add.
     """
