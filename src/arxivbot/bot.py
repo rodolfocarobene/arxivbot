@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import textwrap
 
 import arxiv
 import discord
@@ -21,23 +22,30 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+today = True  # only fetch for today's articles
 TODAY_ARXIV = {}
 
 interests = {
     "categories": ["quant-ph"],
     "authors": ["Malnou", "Cancelo"],
-    "keywords": ["TWPA", "RFSoC"],
+    "keywords": ["TWPA", "RFSoC", "superconducting qubit"],
 }
+
+
+async def send_max_len(channel, text, width=2000):
+    """Send a message splitting it in lines of max 2000 chars."""
+    lines = textwrap.wrap(text, width, break_long_words=False, replace_whitespace=False)
+    for line in lines:
+        await channel.send(line)
 
 
 @bot.event
 async def on_ready():
     """Set bot with autofetch."""
     print("Bot started")
-    channel = bot.get_channel(CHANNEL_ID)
     await fetch_arxiv()
-    await print_arxiv(channel)
-
+    # channel = bot.get_channel(CHANNEL_ID)
+    # await print_arxiv(channel)
     await bot.add_cog(DailyFetch(bot))
 
 
@@ -82,7 +90,7 @@ async def abstract(channel, num):
 @bot.command()
 async def query(channel):
     """Return the registered queries."""
-    await channel.send(str(interests))
+    await send_max_len(channel, str(interests))
 
 
 @bot.command()
@@ -101,21 +109,24 @@ async def add_queries(channel, cat, *keywords):
     else:
         for key in keywords:
             interests[cat].append(key)
-        await channel.send(f"Current queries:\n{interests}")
+        return_str = f"Current queries:\n{interests}"
+        await send_max_len(channel, return_str)
 
 
 @bot.command()
-async def remove_query(channel, keyword):
-    """Remove a parameter from queries.
+async def remove_query(channel, *keywords):
+    """Remove parameters from queries.
 
     parameters
     -----------
-    keyword: str
-        The keyword to remove.
+    keyword: list(str)
+        The keywords to remove.
     """
-    for cat, vals in interests.items():
-        interests[cat] = [val for val in vals if val != keyword]
-    await channel.send(f"Current queries:\n{interests}")
+    for key in keywords:
+        for cat, vals in interests.items():
+            interests[cat] = [val for val in vals if val != key]
+    return_str = f"Current queries:\n{interests}"
+    await send_max_len(channel, return_str)
 
 
 @bot.command()
@@ -123,7 +134,8 @@ async def clear_query(channel):
     """Remove all queries."""
     for cat in interests:
         interests[cat] = []
-    await channel.send(f"Current queries:\n{interests}")
+    return_str = f"Current queries:\n{interests}"
+    await send_max_len(channel, return_str)
 
 
 @bot.command()
@@ -153,7 +165,8 @@ async def print_arxiv(channel):
         names = r.authors[0].name.split(" ")
         first_author = f"{names[0][0]} {names[-1]}"
         return_str += f"\n{i+1}: {r.title} ({first_author}): {r.pdf_url}"
-    await channel.send(return_str)
+
+    await send_max_len(channel, return_str)
 
 
 async def fetch_arxiv():
@@ -180,8 +193,9 @@ async def fetch_arxiv():
     return_str = ""
 
     for i, r in enumerate(results):
-        if r.updated.date() != datetime.datetime.today().date():
-            break
+        if today:
+            if r.updated.date() != datetime.datetime.today().date():
+                break
         return_str += f"\n{i+1}: {r.title} ({r.pdf_url})"
         TODAY_ARXIV[i + 1] = r
 
