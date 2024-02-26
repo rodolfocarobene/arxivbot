@@ -73,7 +73,7 @@ async def fetch(channel):
 
 @bot.command()
 async def set_today(channel, arg):
-    """If True fetch papers only from today, othewise with no limits.
+    """If True fetch papers only from today, otherwise with no limits.
 
     Parameters
     -----------
