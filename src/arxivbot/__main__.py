@@ -72,6 +72,22 @@ async def fetch(channel):
 
 
 @bot.command()
+async def set_today(channel, arg):
+    """If True fetch papers only from today, othewise with no limits.
+
+    Parameters
+    -----------
+    arg: str
+        Can be True or False
+    """
+    global today
+    if arg == "True":
+        today = True
+    elif arg == "False":
+        today = False
+
+
+@bot.command()
 async def abstract(channel, num):
     """Print an abstract of one of the fetched papers.
 
@@ -154,13 +170,13 @@ async def max_results(channel, num):
 
 async def print_arxiv(channel):
     """Format arXiv dictionary and print it."""
-    today = datetime.datetime.today().strftime("%d/%m/%Y")
+    datetoday = datetime.datetime.today().strftime("%d/%m/%Y")
     if len(TODAY_ARXIV) == 0:
         await channel.send(
-            f"(arXivBot update of the {today})\tNo interesting articles today :-("
+            f"(arXivBot update of the {datetoday})\tNo interesting articles today :-("
         )
         return
-    return_str = f"(arXivBot update of the {today})\tNew interesting paper published on arXiv today!\n"
+    return_str = f"(arXivBot update of the {datetoday})\tNew interesting paper published on arXiv today!\n"
     for i, r in enumerate(TODAY_ARXIV.values()):
         names = r.authors[0].name.split(" ")
         first_author = f"{names[0][0]} {names[-1]}"
@@ -172,6 +188,7 @@ async def print_arxiv(channel):
 async def fetch_arxiv():
     """Fetch arXiv for new articles matching interests."""
     global TODAY_ARXIV
+    global today
     TODAY_ARXIV = {}
     client = arxiv.Client()
 

@@ -1,4 +1,5 @@
 docs/source/api-reference/
+ENV
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
