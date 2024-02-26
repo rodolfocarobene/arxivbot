@@ -37,7 +37,7 @@ pip install .
 Run the bot using:
 
 ```bash
-python src/arxivbot/bot.py
+python -m arxivbot
 ```
 
 Once the bot is set up and running, you can use the following commands:
@@ -48,7 +48,7 @@ Once the bot is set up and running, you can use the following commands:
 - `!query`: Returns the registered queries.
 - `!add_queries <cat> <keywords>`: Adds keywords to the specified category
   (categories, authors, keywords).
-- `!remove_query <keyword>`: Removes a parameter from the queries.
+- `!remove_queries <keyword>`: Removes a parameter from the queries.
 - `!clear_query`: Removes all queries.
 - `!max_results <num>`: Changes the maximum number of results to fetch.
 
@@ -56,6 +56,6 @@ Once the bot is set up and running, you can use the following commands:
 
 - The bot fetches papers daily at the specified time (`TIME` variable in the
   script).
-- Papers fetched will be from the current day.
+- Papers fetched will be from the current day if `today` is set to True.
 - Make sure to set up appropriate permissions for the bot in your Discord
   server.

@@ -114,7 +114,7 @@ async def add_queries(channel, cat, *keywords):
 
 
 @bot.command()
-async def remove_query(channel, *keywords):
+async def remove_queries(channel, *keywords):
     """Remove parameters from queries.
 
     parameters
