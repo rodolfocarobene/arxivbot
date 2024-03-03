@@ -81,36 +81,31 @@ def get_email_body(IMAP_SERVER, PORT, EMAIL, PASSWORD):
     mail.login(EMAIL, PASSWORD)
 
     mail.select("inbox")
-    status, email_ids = mail.search(None, '(SUBJECT "quant-ph daily")')
+    _, email_ids = mail.search(None, '(SUBJECT "quant-ph daily")')
 
-    if status == "OK":
-        email_id_list = email_ids[0].split()
-        if email_id_list:
-            latest_email_id = email_id_list[-1]
-            status, email_data = mail.fetch(latest_email_id, "(RFC822)")
-            if status == "OK":
-                raw_email = email_data[0][1]
-                msg = email.message_from_bytes(raw_email)
-                body = msg.get_payload(decode=True).decode()
-                # Get today's date
-                today = date.today()
-                received_date_str = msg.get("Date")
-                received_date = convert_to_datetime(received_date_str).date()
-                print(received_date, today)
+    try:
+        latest_email_id = email_ids[0].split()[-1]
+        _, email_data = mail.fetch(latest_email_id, "(RFC822)")
+        msg = email.message_from_bytes(email_data[0][1])
+        body = msg.get_payload(decode=True).decode()
+        # Get today's date
+        today = date.today()
+        received_date = convert_to_datetime(msg.get("Date")).date()
 
-                body = re.sub(" +", " ", body)
-                body = re.sub("\r", "", body)
-                # Compare received date with today's date
-                if received_date == today:
-                    print("The email was received today.")
-                    mail.logout()
-                    return body
-                else:
-                    print("The email was not received today.")
-                    mail.logout()
-                    # return body
-                    return None
-    mail.logout()
+        body = re.sub(" +", " ", body)
+        body = re.sub("\r", "", body)
+        # Compare received date with today's date
+        if received_date == today:
+            print("The email was received today.")
+            mail.logout()
+            return body
+        print("The email was not received today.")
+        mail.logout()
+        return None
+    except Exception as e:
+        print(e)
+        mail.logout()
+        return None
 
 
 def authors_match(authors_of_interest, paper):

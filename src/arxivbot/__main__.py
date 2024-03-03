@@ -38,16 +38,16 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-with open(FILENAME) as openfile:
+with open(FILENAME, encoding="utf-8") as openfile:
     interests = json.load(openfile)
 
 
 class DailyFetch(commands.Cog):
     """Daily fetch of new articles."""
 
-    def __init__(self, bot) -> None:
+    def __init__(self, thisbot) -> None:
         """Initialize task."""
-        self.bot = bot
+        self.bot = thisbot
         self.my_task.start()
 
     @tasks.loop(time=TIME)
@@ -98,8 +98,6 @@ async def fetch_arxiv():
 
 async def print_arxiv(channel, automatic=False):
     """Format arXiv dictionary and print it."""
-    global TODAY_PAPERS
-
     datetoday = datetime.datetime.today().strftime("%d/%m/%Y")
 
     if automatic:
@@ -107,9 +105,11 @@ async def print_arxiv(channel, automatic=False):
             print("Today is not a working day, no notification!")
             return
 
-    await channel.send(
-        f"(arXivBot update of the {datetoday})\tOf {TODAY_NUMBER} new papers, {len(TODAY_PAPERS)} were found interesting"
+    return_str = f"(arXivBot update of the {datetoday})"
+    return_str += (
+        f"\tOf {TODAY_NUMBER} new papers, {len(TODAY_PAPERS)} were found interesting"
     )
+    await channel.send(return_str)
     if len(TODAY_PAPERS) == 0:
         return
 
@@ -139,7 +139,6 @@ async def abstract(channel, num):
     num: int
         The number of the paper whose abstract you want to print.
     """
-    global TODAY_PAPERS
     paper = TODAY_PAPERS[int(num) - 1]
 
     return_str = f"{paper.title}\n\n{paper.abstract}"
@@ -169,7 +168,7 @@ async def add_queries(channel, cat, *keywords):
         for key in keywords:
             interests[cat].append(key)
 
-        with open(FILENAME, "w") as outfile:
+        with open(FILENAME, "w", encoding="utf-8") as outfile:
             json.dump(interests, outfile)
 
         return_str = f"Current queries:\n{interests}"
@@ -189,7 +188,7 @@ async def remove_queries(channel, *keywords):
         for cat, vals in interests.items():
             interests[cat] = [val for val in vals if val != key]
 
-    with open(FILENAME, "w") as outfile:
+    with open(FILENAME, "w", encoding="utf-8") as outfile:
         json.dump(interests, outfile)
 
     return_str = f"Current queries:\n{interests}"
@@ -202,7 +201,7 @@ async def clear_query(channel):
     for cat in interests:
         interests[cat] = []
 
-    with open(FILENAME, "w") as outfile:
+    with open(FILENAME, "w", encoding="utf-8") as outfile:
         json.dump(interests, outfile)
 
     return_str = f"Current queries:\n{interests}"
