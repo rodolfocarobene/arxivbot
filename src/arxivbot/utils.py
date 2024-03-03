@@ -41,7 +41,8 @@ def convert_to_datetime(date_str) -> Union[datetime, None]:
     date_obj = email.utils.parsedate_tz(date_str)
     if date_obj:
         timestamp = email.utils.mktime_tz(date_obj)
-        return datetime.fromtimestamp(timestamp, tz=pytz.utc)
+        return datetime.fromtimestamp(timestamp, tz=pytz.timezone("CET"))
+
     return None
 
 
@@ -95,6 +96,7 @@ def get_email_body(IMAP_SERVER, PORT, EMAIL, PASSWORD):
                 today = date.today()
                 received_date_str = msg.get("Date")
                 received_date = convert_to_datetime(received_date_str).date()
+                print(received_date, today)
 
                 body = re.sub(" +", " ", body)
                 body = re.sub("\r", "", body)
@@ -106,8 +108,8 @@ def get_email_body(IMAP_SERVER, PORT, EMAIL, PASSWORD):
                 else:
                     print("The email was not received today.")
                     mail.logout()
-                    return body
-                    # return None
+                    # return body
+                    return None
     mail.logout()
 
 

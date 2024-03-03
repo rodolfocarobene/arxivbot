@@ -1,0 +1,14 @@
+{
+  "authors": [
+    "Nicolas Roch",
+    "Gustavo Cancelo"
+  ],
+  "keywords": [
+    "superconducting qubit",
+    "TWPA",
+    "parametric amplifier",
+    "qudits",
+    "RFSoC",
+    "fluxonium"
+  ]
+}
