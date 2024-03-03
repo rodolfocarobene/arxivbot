@@ -10,15 +10,6 @@ from typing import Optional, Union
 import pytz
 
 
-def convert_to_datetime(date_str) -> Union[datetime, None]:
-    """Take email date and convert it to datetime obj."""
-    date_obj = email.utils.parsedate_tz(date_str)
-    if date_obj:
-        timestamp = email.utils.mktime_tz(date_obj)
-        return datetime.fromtimestamp(timestamp, tz=pytz.utc)
-    return None
-
-
 @dataclass
 class Paper:
     """Paper class."""
@@ -43,6 +34,15 @@ class Paper:
         if len(self.authors) != 1:
             author_str += " et al."
         return f"{self.title}, {author_str} ({self.link})"
+
+
+def convert_to_datetime(date_str) -> Union[datetime, None]:
+    """Take email date and convert it to datetime obj."""
+    date_obj = email.utils.parsedate_tz(date_str)
+    if date_obj:
+        timestamp = email.utils.mktime_tz(date_obj)
+        return datetime.fromtimestamp(timestamp, tz=pytz.utc)
+    return None
 
 
 def extract_papers_from_email(email_body):
