@@ -1,7 +1,9 @@
 {
   "authors": [
     "Nicolas Roch",
-    "Gustavo Cancelo"
+    "Gustavo Cancelo",
+    "Maxime Malnou",
+    "Joe Aumentado"
   ],
   "keywords": [
     "superconducting qubit",
@@ -9,6 +11,7 @@
     "parametric amplifier",
     "qudits",
     "RFSoC",
-    "fluxonium"
+    "fluxonium",
+    "qutip"
   ]
 }

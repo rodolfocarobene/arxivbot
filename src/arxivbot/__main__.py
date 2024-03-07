@@ -101,14 +101,12 @@ async def print_arxiv(channel, automatic=False):
     datetoday = datetime.datetime.today().strftime("%d/%m/%Y")
 
     if automatic:
-        if datetime.datetime.today().weekday() >= 5:
-            print("Today is not a working day, no notification!")
+        if datetime.datetime.today().weekday() in (0, 6):
+            print("Yesterday was not a working day, no notification!")
             return
 
     return_str = f"(arXivBot update of the {datetoday})"
-    return_str += (
-        f"\tOf {TODAY_NUMBER} new papers, {len(TODAY_PAPERS)} were found interesting"
-    )
+    return_str += f"\tYesterday there were {TODAY_NUMBER} new papers, {len(TODAY_PAPERS)} were found interesting"
     await channel.send(return_str)
     if len(TODAY_PAPERS) == 0:
         return

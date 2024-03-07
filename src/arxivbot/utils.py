@@ -4,7 +4,7 @@ import email
 import imaplib
 import re
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional, Union
 
 import pytz
@@ -34,6 +34,12 @@ class Paper:
         if len(self.authors) != 1:
             author_str += " et al."
         return f"{self.title}, {author_str} ({self.link})"
+
+
+def extract_email_from_id(mail, id):
+    """Return email message from email id."""
+    _, email_data = mail.fetch(id, "(RFC822)")
+    return email.message_from_bytes(email_data[0][1])
 
 
 def convert_to_datetime(date_str) -> Union[datetime, None]:
@@ -84,24 +90,32 @@ def get_email_body(IMAP_SERVER, PORT, EMAIL, PASSWORD):
     _, email_ids = mail.search(None, '(SUBJECT "quant-ph daily")')
 
     try:
-        latest_email_id = email_ids[0].split()[-1]
-        _, email_data = mail.fetch(latest_email_id, "(RFC822)")
-        msg = email.message_from_bytes(email_data[0][1])
-        body = msg.get_payload(decode=True).decode()
-        # Get today's date
         today = date.today()
+        yesterday = today - timedelta(days=1)
+
+        latest_email_id = email_ids[0].split()[-1]
+        msg = extract_email_from_id(mail, latest_email_id)
         received_date = convert_to_datetime(msg.get("Date")).date()
 
-        body = re.sub(" +", " ", body)
-        body = re.sub("\r", "", body)
-        # Compare received date with today's date
         if received_date == today:
-            print("The email was received today.")
+            print("Found newer email")
+            latest_email_id = email_ids[0].split()[-2]
+            msg = extract_email_from_id(mail, latest_email_id)
+            received_date = convert_to_datetime(msg.get("Date")).date()
+
+        if received_date == yesterday:
+            print("The email was received yesterday.")
             mail.logout()
+
+            body = msg.get_payload(decode=True).decode()
+            body = re.sub(" +", " ", body)
+            body = re.sub("\r", "", body)
+
             return body
-        print("The email was not received today.")
-        mail.logout()
-        return None
+        else:
+            print("The email was not received yesterday.")
+            mail.logout()
+            return None
     except Exception as e:
         print(e)
         mail.logout()
