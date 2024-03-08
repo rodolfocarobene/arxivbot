@@ -33,7 +33,7 @@ class Paper:
         author_str = f"{names[0][0]} {names[-1]}"
         if len(self.authors) != 1:
             author_str += " et al."
-        return f"{self.title}, {author_str} ({self.link})"
+        return f"{self.title}, {author_str} (<{self.link}>)"
 
 
 def extract_email_from_id(mail, id):
