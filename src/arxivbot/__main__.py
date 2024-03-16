@@ -164,7 +164,8 @@ async def add_queries(channel, cat, *keywords):
         await channel.send(f"Parameter cannot be {cat}")
     else:
         for key in keywords:
-            interests[cat].append(key)
+            if key not in interests[cat]:
+                interests[cat].append(key)
 
         with open(FILENAME, "w", encoding="utf-8") as outfile:
             json.dump(interests, outfile)

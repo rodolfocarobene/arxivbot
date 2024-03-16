@@ -127,16 +127,15 @@ def authors_match(authors_of_interest, paper):
 
     If they are, add it to the matching parameter of the paper object.
     """
-    papers_authors = paper.authors
-    lower_of_interest = [name.lower() for name in authors_of_interest]
-    surnames_of_interest = [name.split(" ")[-1] for name in authors_of_interest]
+    surnames_of_interest = [
+        f"{name.split(' ')[0][0]} {name.split(' ')[-1]}" for name in authors_of_interest
+    ]
+    surnames_paper = [
+        f"{name.split(' ')[0][0]} {name.split(' ')[-1]}" for name in paper.authors
+    ]
 
-    lower_paper = [name.lower() for name in papers_authors]
-    surnames_paper = [name.split(" ")[-1] for name in papers_authors]
-
-    for idx, author in enumerate(lower_of_interest):
-        if author in lower_paper or surnames_of_interest[idx] in surnames_paper:
-            # only surname matches
+    for idx, surname in enumerate(surnames_of_interest):
+        if surname in surnames_paper:
             paper.matching.append(authors_of_interest[idx])
 
 
