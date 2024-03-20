@@ -74,6 +74,7 @@ def extract_papers_from_email(email_body):
         authors = authors.replace(" and ", ", ")
         authors = re.sub(" +", " ", authors)
         authors = authors.split(", ")
+        authors = [author for author in authors if author != ""]
 
         paper = Paper(arxiv_id, title, authors, categories, abstract, link)
         papers.append(paper)
